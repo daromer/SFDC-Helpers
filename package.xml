@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>MetadataHelper</members>
+        <members>ProfileHelper</members>
+        <members>ProfileHelper_Test</members>
+        <members>QueryHelper</members>
+        <members>RandomHelper</members>
+        <members>RandomHelper_Test</members>
+        <members>RecordTypeHelper</members>
+        <name>ApexClass</name>
+    </types>
+    <version>39.0</version>
+</Package>
