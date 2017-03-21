@@ -16,7 +16,7 @@ global class RandomHelper {
         for (integer i = 0; i < charLength; i++){
             integer r = Math.mod( rndNum(1,9) , 2 );
             if (r==0){
-                result += string.valueof( rndNum(1,9) );
+                result += string.valueof( rndNum(0,9) );
             }else{
                 if ( Math.mod( rndNum(1,9), 2) == 0 ){
 					result += string.valueof( rndLetter() ).toLowerCase();

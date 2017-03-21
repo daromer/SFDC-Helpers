@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
+        <members>DataQueuebleDmlHelper</members>
+        <members>DataQueuebleDmlHelper_Test</members>
         <members>MetadataHelper</members>
         <members>ProfileHelper</members>
         <members>ProfileHelper_Test</members>
