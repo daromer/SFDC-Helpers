@@ -2,7 +2,7 @@ global class ProfileHelper {
     static map<id, Profile> profileMap{get;set;}   
     
     static{
-        string query = QueryHelper.getSelectAll('Profile', null);
+        string query = QueryHelper.getSelectAll('Profile');
         profileMap = new map<id, Profile>((Profile[])Database.query(query)); 
     }
     

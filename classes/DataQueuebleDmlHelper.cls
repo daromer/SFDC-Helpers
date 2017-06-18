@@ -27,23 +27,38 @@ global class DataQueuebleDmlHelper implements Queueable {
         List<Database.DeleteResult> drList = new List<Database.DeleteResult>();
         list<Database.UpsertResult> urList = new List<Database.UpsertResult>();        
         
-        if(ToInsert != null && ToInsert.size() > 0)            
-               srList.addAll(database.insert( toInsert, false));
+        if(ToInsert != null && ToInsert.size() > 0) {
+            try{
+                srList.addAll(database.insert( toInsert, false));
+            }catch(Exception e){
+                errors +='\n'+e.getMessage() + ' - ' + e.getStackTraceString() + '; ';
+            }
+        }           
         
 
-        if(ToUpdate != null && ToUpdate.size() > 0)          
-               srList.addAll(database.update( toUpdate, false));
+        if(ToUpdate != null && ToUpdate.size() > 0){          
+            try{
+               srList.addAll(database.update( toUpdate, false));                
+            }catch(Exception e){
+                errors +='\n'+e.getMessage() + ' - ' + e.getStackTraceString() + '; ';
+            }
+        }
         
         
-        if(ToDelete != null && ToDelete.size() > 0)
+        if(ToDelete != null && ToDelete.size() > 0){
+            try{
                 drList.addAll(database.delete( ToDelete, false));
+            }catch(Exception e){
+                errors +='\n'+e.getMessage() + ' - ' + e.getStackTraceString() + '; ';
+            }
+        }
             	
         
         for(Database.SaveResult sr: srList){
             if(!sr.isSuccess())
             {
                 for(Database.Error err : sr.getErrors()) {
-                    errors +='\n'+err.getMessage();
+                    errors +='\n'+err.getMessage()+ ' - ' + err.getFields() + '; ';
                 }
             }
         }
@@ -52,7 +67,7 @@ global class DataQueuebleDmlHelper implements Queueable {
             if(!sr.isSuccess())
             {
                 for(Database.Error err : sr.getErrors()) {
-                    errors +='\n'+err.getMessage();
+                    errors +='\n'+err.getMessage() + ' - ' + err.getFields() + '; ';
                 }
             }
         }
@@ -61,5 +76,5 @@ global class DataQueuebleDmlHelper implements Queueable {
        
     }
     
-    class DataQueuebleDmlHelperException extends Exception {}
+    global class DataQueuebleDmlHelperException extends Exception {}
 }

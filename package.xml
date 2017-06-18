@@ -4,12 +4,17 @@
         <members>DataQueuebleDmlHelper</members>
         <members>DataQueuebleDmlHelper_Test</members>
         <members>MetadataHelper</members>
+        <members>MetadataHelper_Test</members>
+        <members>PicklistHelper</members>
+        <members>PicklistHelper_Test</members>
         <members>ProfileHelper</members>
         <members>ProfileHelper_Test</members>
         <members>QueryHelper</members>
+        <members>QueryHelper_Test</members>
         <members>RandomHelper</members>
         <members>RandomHelper_Test</members>
         <members>RecordTypeHelper</members>
+        <members>RecordTypeHelper_Test</members>
         <name>ApexClass</name>
     </types>
     <version>39.0</version>
