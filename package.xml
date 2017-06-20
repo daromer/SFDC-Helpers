@@ -17,5 +17,9 @@
         <members>RecordTypeHelper_Test</members>
         <name>ApexClass</name>
     </types>
+    <types>
+        <members>CurrentSessionId</members>
+        <name>ApexPage</name>
+    </types>
     <version>39.0</version>
 </Package>

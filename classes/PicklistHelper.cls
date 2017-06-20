@@ -93,68 +93,62 @@ global class PicklistHelper {
         public String validFor {get;set;}
     }
     
-    static map<string, object> getDependentOptionsMapCache{get; private set;}
     global static Map<String,List<String>> getDependentOptionsMap(String objName, String contrfieldName, String depfieldName){
-        string cacheKey = objName+';;;'+contrfieldName+';;;'+depfieldName;
-        if (getDependentOptionsMapCache == null ) getDependentOptionsMapCache = new map<string, object>();
         
-        if (!getDependentOptionsMapCache.containsKey(cacheKey)){
-            String objectName = objName.toLowerCase();
-            String controllingField = contrfieldName.toLowerCase();
-            String dependentField = depfieldName.toLowerCase();        
-            
-            Map<String,List<String>> objResults = new Map<String,List<String>>();
-            //get the string to sobject global map
-            Map<String,Schema.SObjectType> objGlobalMap = Schema.getGlobalDescribe();
-            if (!Schema.getGlobalDescribe().containsKey(objectName)){
-                System.debug('OBJNAME NOT FOUND --.> ' + objectName);
-                return null;
-            }
-            
-            Schema.SObjectType objType = Schema.getGlobalDescribe().get(objectName);
-            if (objType==null){
-                return objResults;
-            }
-            Bitset bitSetObj = new Bitset();
-            Map<String, Schema.SObjectField> objFieldMap = objType.getDescribe().fields.getMap();
-            //Check if picklist values exist
-            if (!objFieldMap.containsKey(controllingField) || !objFieldMap.containsKey(dependentField)){
-                System.debug('FIELD NOT FOUND --.> ' + controllingField + ' OR ' + dependentField);
-                return objResults;     
-            }
-            List<Schema.PicklistEntry> contrEntries = objFieldMap.get(controllingField).getDescribe().getPicklistValues();
-            List<Schema.PicklistEntry> depEntries = objFieldMap.get(dependentField).getDescribe().getPicklistValues();
-            objFieldMap = null;
-            List<Integer> controllingIndexes = new List<Integer>();
-            for(Integer contrIndex=0; contrIndex<contrEntries.size(); contrIndex++){            
-                Schema.PicklistEntry ctrlentry = contrEntries[contrIndex];
-                String label = ctrlentry.getLabel();
-                objResults.put(label,new List<String>());
-                controllingIndexes.add(contrIndex);
-            }
-            List<Schema.PicklistEntry> objEntries = new List<Schema.PicklistEntry>();
-            List<PicklistEntryWrapper> objJsonEntries = new List<PicklistEntryWrapper>();
-            for(Integer dependentIndex=0; dependentIndex<depEntries.size(); dependentIndex++){            
-                Schema.PicklistEntry depentry = depEntries[dependentIndex];
-                objEntries.add(depentry);
-            } 
-            objJsonEntries = (List<PicklistEntryWrapper>)JSON.deserialize(JSON.serialize(objEntries), List<PicklistEntryWrapper>.class);
-            List<Integer> indexes;
-            for (PicklistEntryWrapper objJson : objJsonEntries){
-                if (objJson.validFor==null || objJson.validFor==''){
-                    continue;
-                }
-                indexes = bitSetObj.testBits(objJson.validFor,controllingIndexes);
-                for (Integer idx : indexes){                
-                    String contrLabel = contrEntries[idx].getLabel();
-                    objResults.get(contrLabel).add(objJson.label);
-                }
-            }
-            objEntries = null;
-            objJsonEntries = null;
-            getDependentOptionsMapCache.put(cachekey,objResults);
+        String objectName = objName.toLowerCase();
+        String controllingField = contrfieldName.toLowerCase();
+        String dependentField = depfieldName.toLowerCase();        
+        
+        Map<String,List<String>> objResults = new Map<String,List<String>>();
+        //get the string to sobject global map
+        Map<String,Schema.SObjectType> objGlobalMap = Schema.getGlobalDescribe();
+        if (!Schema.getGlobalDescribe().containsKey(objectName)){
+            System.debug('OBJNAME NOT FOUND --.> ' + objectName);
+            return null;
         }
-        return (map<string,list<string>>)getDependentOptionsMapCache.get(cacheKey);
+        
+        Schema.SObjectType objType = Schema.getGlobalDescribe().get(objectName);
+        if (objType==null){
+            return objResults;
+        }
+        Bitset bitSetObj = new Bitset();
+        Map<String, Schema.SObjectField> objFieldMap = objType.getDescribe().fields.getMap();
+        //Check if picklist values exist
+        if (!objFieldMap.containsKey(controllingField) || !objFieldMap.containsKey(dependentField)){
+            System.debug('FIELD NOT FOUND --.> ' + controllingField + ' OR ' + dependentField);
+            return objResults;     
+        }
+        List<Schema.PicklistEntry> contrEntries = objFieldMap.get(controllingField).getDescribe().getPicklistValues();
+        List<Schema.PicklistEntry> depEntries = objFieldMap.get(dependentField).getDescribe().getPicklistValues();
+        objFieldMap = null;
+        List<Integer> controllingIndexes = new List<Integer>();
+        for(Integer contrIndex=0; contrIndex<contrEntries.size(); contrIndex++){            
+            Schema.PicklistEntry ctrlentry = contrEntries[contrIndex];
+            String label = ctrlentry.getLabel();
+            objResults.put(label,new List<String>());
+            controllingIndexes.add(contrIndex);
+        }
+        List<Schema.PicklistEntry> objEntries = new List<Schema.PicklistEntry>();
+        List<PicklistEntryWrapper> objJsonEntries = new List<PicklistEntryWrapper>();
+        for(Integer dependentIndex=0; dependentIndex<depEntries.size(); dependentIndex++){            
+            Schema.PicklistEntry depentry = depEntries[dependentIndex];
+            objEntries.add(depentry);
+        } 
+        objJsonEntries = (List<PicklistEntryWrapper>)JSON.deserialize(JSON.serialize(objEntries), List<PicklistEntryWrapper>.class);
+        List<Integer> indexes;
+        for (PicklistEntryWrapper objJson : objJsonEntries){
+            if (objJson.validFor==null || objJson.validFor==''){
+                continue;
+            }
+            indexes = bitSetObj.testBits(objJson.validFor,controllingIndexes);
+            for (Integer idx : indexes){                
+                String contrLabel = contrEntries[idx].getLabel();
+                objResults.get(contrLabel).add(objJson.label);
+            }
+        }
+        objEntries = null;
+        objJsonEntries = null;
+        return objResults;
     }
     
     
@@ -164,60 +158,127 @@ global class PicklistHelper {
     
     /****** Aditional Functions not Described in the source link *****/
     
-    static map<string, object> GetPicklistValuesCache{get; private set;}
     global static list<string> GetPicklistValues(string objectName, string fieldName){
-        string cacheKey = objectName + ';;;' + fieldName;
-        if (GetPicklistValuesCache == null) GetPicklistValuesCache = new map<string, object>();
-        if (!GetPicklistValuesCache.containsKey(cacheKey)){
-            list<string> result = new list<string>();        
-            SObjectType accountType = Schema.getGlobalDescribe().get(objectName);        
-            Schema.DescribeFieldResult fieldResult = contact.Leadsource.getDescribe();
-            List<Schema.PicklistEntry> ple = fieldResult.getPicklistValues();        
-            if (accountType != null){            
-                Map<String,Schema.SObjectField> mfields = accountType.getDescribe().fields.getMap();
-                for(string key : mfields.keyset()){
-                    Schema.SObjectField item = mfields.get(key);    
-                    Schema.DescribeFieldResult fieldDescribe = item.getDescribe();
-                    if (fieldDescribe.getName() == fieldName){
-                        List<Schema.PicklistEntry> entries = fieldDescribe.getPicklistValues();                    
-                        for (Schema.PicklistEntry pe : entries) {
-                            if (pe.isActive())
-                                result.add(pe.getValue());                                   
-                        }
-                        if (result.size()> 0) break;
+        list<string> result = new list<string>();        
+        SObjectType accountType = Schema.getGlobalDescribe().get(objectName);        
+        Schema.DescribeFieldResult fieldResult = contact.Leadsource.getDescribe();
+        List<Schema.PicklistEntry> ple = fieldResult.getPicklistValues();        
+        if (accountType != null){            
+            Map<String,Schema.SObjectField> mfields = accountType.getDescribe().fields.getMap();
+            for(string key : mfields.keyset()){
+                Schema.SObjectField item = mfields.get(key);    
+                Schema.DescribeFieldResult fieldDescribe = item.getDescribe();
+                if (fieldDescribe.getName() == fieldName){
+                    List<Schema.PicklistEntry> entries = fieldDescribe.getPicklistValues();                    
+                    for (Schema.PicklistEntry pe : entries) {
+                        if (pe.isActive())
+                        result.add(pe.getValue());                                   
                     }
+                    if (result.size()> 0) break;
                 }
-            }    
-            
-            GetPicklistValuesCache.put(cachekey, result);
-        }
-        
-        return (string[])GetPicklistValuesCache.get(cacheKey);
+            }
+        }         
+        return result;
     }
     
-    static map<string, object> getPicklistValuesByRecordTypeCache{get; private set;}
+    global static map<string, map<string,list<string>> > GetAlllPicklistDependencies( string objectName ){
+        map<string, map<string,list<string>> > result = new map<string, map<string,list<string>> >();
+        map<string, map<string,object>> fieldsMetadataOfObjectMap = MetadataHelper.getFieldsMetadataMap(objectName, null, true, null);
+        for (string fieldName : fieldsMetadataOfObjectMap.keySet()){
+            if( fieldsMetadataOfObjectMap.get(fieldName).containsKey('isDependentPicklist')){
+                if ( Boolean.valueOf(fieldsMetadataOfObjectMap.get(fieldName).get('isDependentPicklist')  ) ){
+                    string controllingField = string.valueOf(fieldsMetadataOfObjectMap.get(fieldName).get('Controller'));
+                    result.put( controllingField + '___' + fieldName, getDependentOptionsMap(objectName, controllingField, fieldName) );
+                }
+            }
+        }        
+        return result;
+    }
+    
+    
+    global static map<string, object > getPicklistValuesOfSObjectByRecordTypeCache{get; set;}
+    global static map<string, set<string> > getPicklistValuesOfSObjectByRecordType(string sobjectName, string recordtypeApiName){
+        string cacheKey = sobjectName + '.' + recordtypeApiName;
+        
+        if (getPicklistValuesOfSObjectByRecordTypeCache == null) getPicklistValuesOfSObjectByRecordTypeCache = new map<string, object >();
+        
+        if (!getPicklistValuesOfSObjectByRecordTypeCache.containsKey(cacheKey)){
+            map<string,set<string>> result = new map<string,set<string>>();
+            
+            MetadataService.MetadataPort service = new MetadataService.MetadataPort();
+            service.SessionHeader = new MetadataService.SessionHeader_element(); 
+            if(SessionId == null){
+                SessionId = Page.CurrentSessionId.getContent().toString().trim();
+            }
+            service.SessionHeader.sessionId = SessionId;
+            
+            string fullRecordtypeAPiName =  SObjectName+'.'+recordtypeApiName;
+            
+            MetadataService.RecordType recordType = (MetadataService.RecordType) service.readMetadata(
+                'RecordType', new String[] { fullRecordtypeAPiName }
+            ).getRecords()[0];
+            
+            if (recordType != null && recordType.picklistValues != null){
+                for ( MetadataService.RecordTypePicklistValue rpk : recordType.picklistValues ) { 
+                    if( !result.containsKey(rpk.picklist) )result.put(rpk.picklist, new set<string>());                                              
+                    for ( MetadataService.PicklistValue pk : rpk.values ) {                    
+                        result.get(rpk.picklist).add(pk.fullName);
+                    }
+                }
+            }
+            
+            getPicklistValuesOfSObjectByRecordTypeCache.put(cacheKey, result);
+        }
+        return (map<string, set<string> >)getPicklistValuesOfSObjectByRecordTypeCache.get(cacheKey);
+    }
+    
+    
+    global static map<string, object> getPicklistValuesByRecordTypeCache{get; private set;}
+    global static String SessionId{get;private set;}
     global static string[] getPicklistValuesByRecordType(string SObjectName, string picklistApiName, string recordtypeApiName){
         if (getPicklistValuesByRecordTypeCache == null) getPicklistValuesByRecordTypeCache = new map<string,object>();
         string cacheKey = SObjectName+';'+recordtypeApiName+';'+picklistApiName;
         if (!getPicklistValuesByRecordTypeCache.containsKey(cacheKey)){            
             list<string> rtPicklistValues = new list<string>();
-            if (!test.isRunningTest()){
-                MetadataService.MetadataPort service = new MetadataService.MetadataPort();
-                service.SessionHeader = new MetadataService.SessionHeader_element();
-                service.SessionHeader.sessionId = UserInfo.getSessionId();
-                
-                MetadataService.RecordType recordType = (MetadataService.RecordType) service.readMetadata(
-                    'RecordType', new String[] { SObjectName+'.'+recordtypeApiName }
-                ).getRecords()[0];
-                
-                if (recordType != null && recordType.picklistValues != null){
-                    for ( MetadataService.RecordTypePicklistValue rpk : recordType.picklistValues ) {            
-                        if (rpk.picklist == picklistAPIName) for ( MetadataService.PicklistValue pk : rpk.values )rtPicklistValues.add(pk.fullName);
-                    }
-                }
-            }else{
-				rtPicklistValues.addAll( GetPicklistValues(SObjectName, picklistAPIName) );                
+            
+            /*MetadataService.MetadataPort service = new MetadataService.MetadataPort();
+            service.SessionHeader = new MetadataService.SessionHeader_element(); 
+            if(SessionId == null){
+                SessionId = Page.CurrentSessionId.getContent().toString().trim();
             }
+            service.SessionHeader.sessionId = SessionId;
+            
+            string fullRecordtypeAPiName =  SObjectName+'.'+recordtypeApiName;
+            
+            system.debug('service.SessionHeader ====> ' + service.SessionHeader.sessionId);
+            system.debug('service.fullRecordtypeAPiName ====> ' + fullRecordtypeAPiName);
+            
+            MetadataService.RecordType recordType = (MetadataService.RecordType) service.readMetadata(
+                'RecordType', new String[] { fullRecordtypeAPiName }
+            ).getRecords()[0];
+            
+            if (recordType != null && recordType.picklistValues != null){
+                for ( MetadataService.RecordTypePicklistValue rpk : recordType.picklistValues ) {            
+                    if (rpk.picklist == picklistAPIName){                                
+                        for ( MetadataService.PicklistValue pk : rpk.values ) {                    
+                            rtPicklistValues.add(pk.fullName);
+                        }
+                    }             
+                }
+            }*/
+            
+            map<string, set<string>> pvOfSOjbectByRecordtype = getPicklistValuesOfSObjectByRecordType(SObjectName, recordtypeApiName);
+            string[] keys = new list<string>(pvOfSOjbectByRecordtype.keySet());
+            
+            system.debug('pvOfSOjbectByRecordtype.keys..... ==> ' + pvOfSOjbectByRecordtype.keySet());
+            system.debug('pvOfSOjbectByRecordtype.values for '+keys[0]+'..... ==> ' + pvOfSOjbectByRecordtype.get(keys[0]) );
+            
+            if(pvOfSOjbectByRecordtype != null){
+                if (pvOfSOjbectByRecordtype.containsKey(picklistApiName)){
+                    rtPicklistValues.addAll(new list<string>( pvOfSOjbectByRecordtype.get(picklistApiName) ));
+                }
+            }
+                
             getPicklistValuesByRecordTypeCache.put(cacheKey, rtPicklistValues);
         }        
         return (string[])getPicklistValuesByRecordTypeCache.get(cacheKey);
