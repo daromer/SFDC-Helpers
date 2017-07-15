@@ -195,6 +195,9 @@ global class PicklistHelper {
         return result;
     }
     
+    public static string scape(string value){
+        return (value!=null)? value.replace('%28', '(').replace('%29', ')').replace('%2','/') : null;
+    }
     
     global static map<string, object > getPicklistValuesOfSObjectByRecordTypeCache{get; set;}
     global static map<string, set<string> > getPicklistValuesOfSObjectByRecordType(string sobjectName, string recordtypeApiName){
@@ -222,7 +225,7 @@ global class PicklistHelper {
                 for ( MetadataService.RecordTypePicklistValue rpk : recordType.picklistValues ) { 
                     if( !result.containsKey(rpk.picklist) )result.put(rpk.picklist, new set<string>());                                              
                     for ( MetadataService.PicklistValue pk : rpk.values ) {                    
-                        result.get(rpk.picklist).add(pk.fullName);
+                        result.get(rpk.picklist).add( scape(pk.fullName) );
                     }
                 }
             }
