@@ -1,3 +1,10 @@
+/**************************************
+Author             : Danny Robles (dyroblesmercedes@gmail.com) / Angel Robles
+Purpose            : Allows to update/insert/delete a set or records using a queueable generic class
+Reviewed By        : 
+Last Modified By   : 
+Example            : 
+**************************************/
 global class DataQueuebleDmlHelper implements Queueable {   
     public List<SObject> ToInsert{get;set;}
     public List<SObject> ToDelete {get;set;}

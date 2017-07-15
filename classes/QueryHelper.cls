@@ -1,6 +1,6 @@
 /**************************************
 Author             : Danny Robles (dyroblesmercedes@gmail.com)
-Purpose            : Allows the user to geenrade queries that deals with all fields of an object.      
+Purpose            : Allows to create queries that gets all fields of an object.      
 TestClass		   : QueryHelper_Test
 Examples           : QueryHelper.getSelectAll('Case', null,new string[]{'Parent.Name'}, new set<string>(new string[]{'CreatedById'}), null); 
 **************************************/

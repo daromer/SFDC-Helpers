@@ -1,3 +1,10 @@
+/**************************************
+Author             : Danny Robles (dyroblesmercedes@gmail.com)
+Purpose            : Helps to generate random words, char or id
+Reviewed By        : 
+Last Modified By   : 
+Example            : Id testId = RandomHelper.rndId();
+**************************************/
 global class RandomHelper {
     
     static string[] letters = new string[]{'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z'};

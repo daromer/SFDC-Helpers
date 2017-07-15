@@ -1,3 +1,11 @@
+/**************************************
+Author             : Danny Robles (dyroblesmercedes@gmail.com)
+Purpose            : Helps get the metadata of an SObject and the fields ( uses the picklistvalues to get the picklist values of the fields and also filters by recordtype id).
+Reviewed By        : 
+Last Modified By   : 
+Example            : map<string, map<string,object>> opportunityMetadata = MetadataHelper.getFieldsMetadataMap('Opportunity', new string[]{'StageName'},false,null);
+**************************************/
+
 global class MetadataHelper {
     global static map<string, map<string, map<string,object>>> ObjectCachedMetadata{get;set;}
     

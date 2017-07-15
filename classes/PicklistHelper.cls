@@ -1,8 +1,6 @@
 /**************************************
 Author             : Danny Robles
 Purpose            : Calculates the dependency asociation values from a two fields (Controller and dependent field)					 
-Req-no/Release     : Req-08045 && Req-09556
-Created Date       : 12/16/2016
 Reviewed By        : 
 Last Modified By   : 
 Example			   : Map<String,List<String>> valueAndListDependentValuesMap = PicklistHelper.getDependentOptionsMap( objectName , contrfieldName, depfieldName);

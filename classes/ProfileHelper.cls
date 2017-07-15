@@ -1,3 +1,11 @@
+/**************************************
+Author             : Danny Robles
+Purpose            : Helper class for getting Profile by name or id             
+Reviewed By        : 
+Last Modified By   : 
+Example            : Id sysadminId = ProfileHelper.getByName('System Administrator').Id;
+**************************************/
+
 global class ProfileHelper {
     static map<id, Profile> profileMap{get;set;}   
     
