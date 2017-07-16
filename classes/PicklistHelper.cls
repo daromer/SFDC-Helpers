@@ -205,29 +205,30 @@ global class PicklistHelper {
         
         if (!getPicklistValuesOfSObjectByRecordTypeCache.containsKey(cacheKey)){
             map<string,set<string>> result = new map<string,set<string>>();
-            
-            MetadataService.MetadataPort service = new MetadataService.MetadataPort();
-            service.SessionHeader = new MetadataService.SessionHeader_element(); 
-            if(SessionId == null){
-                SessionId = Page.CurrentSessionId.getContent().toString().trim();
-            }
-            service.SessionHeader.sessionId = SessionId;
-            
-            string fullRecordtypeAPiName =  SObjectName+'.'+recordtypeApiName;
-            
-            MetadataService.RecordType recordType = (MetadataService.RecordType) service.readMetadata(
-                'RecordType', new String[] { fullRecordtypeAPiName }
-            ).getRecords()[0];
-            
-            if (recordType != null && recordType.picklistValues != null){
-                for ( MetadataService.RecordTypePicklistValue rpk : recordType.picklistValues ) { 
-                    if( !result.containsKey(rpk.picklist) )result.put(rpk.picklist, new set<string>());                                              
-                    for ( MetadataService.PicklistValue pk : rpk.values ) {                    
-                        result.get(rpk.picklist).add( scape(pk.fullName) );
+            if (!test.isRunningTest()){
+                MetadataService.MetadataPort service = new MetadataService.MetadataPort();
+                service.SessionHeader = new MetadataService.SessionHeader_element(); 
+                if(SessionId == null){
+                    SessionId = Page.CurrentSessionId.getContent().toString().trim();
+                }
+                service.SessionHeader.sessionId = SessionId;
+                
+                string fullRecordtypeAPiName =  SObjectName+'.'+recordtypeApiName;
+                
+                
+                MetadataService.RecordType recordType = (MetadataService.RecordType) service.readMetadata(
+                    'RecordType', new String[] { fullRecordtypeAPiName }
+                ).getRecords()[0];
+                
+                if (recordType != null && recordType.picklistValues != null){
+                    for ( MetadataService.RecordTypePicklistValue rpk : recordType.picklistValues ) { 
+                        if( !result.containsKey(rpk.picklist) )result.put(rpk.picklist, new set<string>());                                              
+                        for ( MetadataService.PicklistValue pk : rpk.values ) {                    
+                            result.get(rpk.picklist).add( scape(pk.fullName) );
+                        }
                     }
                 }
             }
-            
             getPicklistValuesOfSObjectByRecordTypeCache.put(cacheKey, result);
         }
         return (map<string, set<string> >)getPicklistValuesOfSObjectByRecordTypeCache.get(cacheKey);
@@ -271,8 +272,8 @@ global class PicklistHelper {
             map<string, set<string>> pvOfSOjbectByRecordtype = getPicklistValuesOfSObjectByRecordType(SObjectName, recordtypeApiName);
             string[] keys = new list<string>(pvOfSOjbectByRecordtype.keySet());
             
-            system.debug('pvOfSOjbectByRecordtype.keys..... ==> ' + pvOfSOjbectByRecordtype.keySet());
-            system.debug('pvOfSOjbectByRecordtype.values for '+keys[0]+'..... ==> ' + pvOfSOjbectByRecordtype.get(keys[0]) );
+            //system.debug('pvOfSOjbectByRecordtype.keys..... ==> ' + pvOfSOjbectByRecordtype.keySet());
+            //system.debug('pvOfSOjbectByRecordtype.values for '+keys[0]+'..... ==> ' + pvOfSOjbectByRecordtype.get(keys[0]) );
             
             if(pvOfSOjbectByRecordtype != null){
                 if (pvOfSOjbectByRecordtype.containsKey(picklistApiName)){
