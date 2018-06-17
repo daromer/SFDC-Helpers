@@ -7,5 +7,6 @@ public class PicklistHelper_Test {
         PicklistHelper.GetPicklistValues(sobjectName, fieldName);
         PicklistHelper.getPicklistValuesByRecordType(SObjectName, fieldName, recordtypeName);
         PicklistHelper.getDependentOptionsMap(sobjectName, fieldName, 'Engagement_Level__c');
+        PicklistHelper.GetAlllPicklistDependencies(sobjectName);
     }
 }

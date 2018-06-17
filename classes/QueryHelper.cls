@@ -19,6 +19,17 @@ global class QueryHelper {
         return getSelectAll(objectName, relatedList, aditionalFields, null, subQueries);
     }    
     
+    global static string[] getAllParentFields(string sobjectParent, string sobjectParentPrefix){
+        string[] fieldsFound = new string[]{};
+        if (Schema.getGlobalDescribe().containsKey(sobjectParent)){            
+            Map<String,Schema.SObjectField> fields = Schema.getGlobalDescribe().get(sobjectParent).getDescribe().fields.getMap();
+            for(String fieldName : fields.keySet()){
+                fieldsFound.add( sobjectParentPrefix + '.' + fieldName  );
+            }
+        }
+        return fieldsFound;
+    }
+    
     global static string getSelectAll(string objectName, string relatedList, string[] aditionalFields, set<string> fieldsToAvoid, string[] subQueries){
         string result = '';
         

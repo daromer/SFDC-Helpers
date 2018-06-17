@@ -1,1 +1,1 @@
-<apex:page setup="false" sidebar="false" showHeader="false" wizard="false" contentType="application/json" cache="true">{!$Api.Session_ID}</apex:page>
+<apex:page setup="false" sidebar="false" showHeader="false" wizard="false" contentType="application/json" cache="false">{!$Api.Session_ID}</apex:page>
